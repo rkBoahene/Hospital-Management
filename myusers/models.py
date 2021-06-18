@@ -100,7 +100,7 @@ class HMUser(AbstractBaseUser):
     lastupdatedby_id = models.IntegerField(default=0)
     name_of_client = models.CharField(max_length=255, blank=True, null=True)
     client = models.ForeignKey(
-        Client, blank=True, null=True, related_name='myusers')
+        Client, blank=True, null=True, related_name='myusers', on_delete=models.CASCADE)
     return_message = models.TextField(blank=True, null=True)
     temporal_login_fails = models.IntegerField(default=0)
     permanent_login_fails = models.IntegerField(default=0)
@@ -150,7 +150,7 @@ class EditClient(models.Model):
         regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+233200000000' or '0200000000'. Up to 15 digits allowed.")
     created = models.DateTimeField(auto_now_add=True)
     hmuser = models.ForeignKey(
-        HMUser, blank=True, null=True, related_name='myuluser')
+        HMUser, blank=True, null=True, related_name='myuluser', on_delete=models.CASCADE)
     is_editing = models.BooleanField(default=False)
     is_edit = models.BooleanField(default=False)
     is_edited = models.BooleanField(default=False)
@@ -165,9 +165,10 @@ class UserActivity(models.Model):
     module = models.CharField(max_length=1000, blank=True, null=True)
     action = models.CharField(max_length=1000, blank=True, null=True)
     description = models.CharField(max_length=1000, blank=True, null=True)
-    user = models.ForeignKey(HMUser, related_name='user_activities')
+    user = models.ForeignKey(
+        HMUser, related_name='user_activities', on_delete=models.CASCADE)
     client = models.ForeignKey(
-        Client, related_name='user_activities', blank=True, null=True)
+        Client, related_name='user_activities', blank=True, null=True, on_delete=models.CASCADE)
     device = models.CharField(max_length=1000, blank=True, null=True)
     ip_address = models.CharField(max_length=1000, blank=True, null=True)
     country = models.CharField(max_length=1000, blank=True, null=True)

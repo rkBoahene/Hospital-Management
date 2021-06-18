@@ -3,6 +3,18 @@ from .models import *
 from django.forms import widgets
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import authenticate
+from django.forms.utils import ErrorList
+
+
+class DivErrorList(ErrorList):
+
+    def __unicode__(self):
+        return self.as_divs()
+
+    def as_divs(self):
+        if not self:
+            return u''
+        return u'%s' % ''.join([u'%s' % e for e in self])
 
 
 class LoginForm(forms.Form):
@@ -77,7 +89,7 @@ class ULClientForm(forms.ModelForm):
                                       )
 
     class Meta:
-        model = ULUser
+        model = HMUser
         fields = ['email', 'name_of_client', 'phone_number', 'overdraft_limit']
 
 
@@ -85,8 +97,8 @@ class ULClientReviewForm(forms.ModelForm):
 
     class Meta:
         model = Client
-        fields = ['overdraft_limit', 'name', 'email',
-                  'wallet_balance', 'momo', 'account_name', 'account_number', ]
+        fields = ['name', 'email',
+                  'hospital_name', 'hospital_branch', ]
 
     overdraft_limit = forms.CharField(
         widget=forms.TextInput(
@@ -164,3 +176,32 @@ class ClientReviewEditForm(forms.ModelForm):
                                           attrs={'class': "form-control"}
                                       )
                                       )
+
+
+class ClientForm(forms.ModelForm):
+
+    STATUS_TYPES = (
+        # ('4', 'SuperUser'),
+        ('5', 'Viewer'),
+        ('6', 'Developer'),
+    )
+
+    email = forms.CharField(widget=forms.TextInput(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "Email"}))
+    first_name = forms.CharField(widget=forms.TextInput(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "First Name"}))
+    last_name = forms.CharField(widget=forms.TextInput(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "Last Name"}))
+    phone_number = forms.CharField(widget=forms.TextInput(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "Phone Number"}))
+    country = forms.CharField(widget=forms.TextInput(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "Country"}))
+    branch = forms.CharField(widget=forms.TextInput(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "Branch"}))
+    permission = forms.ChoiceField(widget=forms.Select(
+        attrs={'class': "form-control", 'required': True, 'placeholder': "Permission"}), choices=STATUS_TYPES)
+
+    class Meta:
+        model = HMUser
+        fields = ['email', 'first_name', 'last_name',
+                  'phone_number', 'permission', 'country', 'branch']
